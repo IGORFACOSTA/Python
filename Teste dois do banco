@@ -1,0 +1,121 @@
+importar quebra de texto
+
+menu de definição():
+    menu_text = """\n
+====== MENU =====
+[d]\tDepositar
+[s]\tSacar
+[e]\tExtrato
+[nc]\tNova conta
+[lc]\tListar contas
+[nu]\tNovo usuário
+[q]\tSair
+==> """
+    retornar entrada(textwrap.dedent(menu_text))
+
+def depositar(saldo, valor, extrato):
+    se valor > 0:
+        saldo += valor
+        extrato += f"Depósito: R$ {valor:.2f}\n"
+        devolver saldo, extrato
+    outro:
+        print("Operação falhou! O valor informado é inválido.")
+        devolver saldo, extrato
+
+def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
+    se valor > saldo:
+        print("Operação falhou! Você não tem saldo suficiente.")
+    elif valor > limite:
+        print("Operação falhou! O valor do saque excede o limite.")
+    elif numero_saques >= limite_saques:
+        print("Operação falha! Número máximo de saques excedidos.")
+    elif valor > 0:
+        saldo -= valor
+        extrato += f"Saque: R$ {valor:.2f}\n"
+        numero_saques += 1
+    outro:
+        print("Operação falhou! O valor informado é inválido.")
+    retornar saldo, extrato, numero_saques
+
+def exibir_extrato(saldo, /, *, extrato):
+    imprimir("\n================ EXTRATO ================")
+    print("Não foram realizadas movimentações." if not extrato else extrato)
+    print(f"\nSaldo: R$ {saldo:.2f}")
+    imprimir("===========================================)
+
+def criar_usuário(usuário):
+    usuario.append({"nome": input("Nome do usuário: "),
+                    "cpf": input("CPF do usuário: "),
+                    "endereco": input("Endereço do usuário: "),
+                    # Você pode adicionar mais campos conforme necessário
+                    })
+
+def filtrar_usuário(cpf, usuário):
+    para usuário em usuário:
+        if usuário["cpf"] == cpf:
+            usuário de retorno
+    retornar Nenhum
+
+def criar_conta(agencia, numero_conta, usuário):
+    # Assumindo que usuario é uma lista de dicionários onde cada dicionário representa um usuário
+    user = filtrar_usuario(cpf=input("Digite o CPF do titular da conta: "), usuario=usuario)
+    se usuário:
+        conta = {"agência": agência,
+                 "numero_conta": numero_conta,
+                 "titular": usuário}
+        retornar conta
+    outro:
+        print("Usuário não encontrado.")
+        retornar Nenhum
+
+def listar_contas(contas):
+    para conta em contas:
+        print("Agência:", conta["agência"])
+        print("Número da conta:", conta["numero_conta"])
+        print("Titular:", conta["titular"]["nome"])
+        print("CPF do titular:", conta["titular"]["cpf"])
+        print() # Linha vazia para separação
+
+def principal():
+    LIMITE_SAQUES = 3
+    AGÊNCIA = "0001"
+    saldo = 0
+    limite = 500
+    extrato = ""
+    numero_saques = 0
+    usuário = []
+    contas = []
+
+    enquanto Verdadeiro:
+        opção = menu()
+
+        if opção == "d":
+            valor = float(input("Informe o valor do depósito: "))
+            saldo, extrato = depositar(saldo, valor, extrato)
+
+        elif opção == "s":
+            valor = float(input("Informe o valor do saque: "))
+            saldo, extrato, numero_saques = sacar(saldo=saldo, valor=valor, extrato=extrato, limite=limite, numero_saques=numero_saques, limite_saques=LIMITE_SAQUES)
+
+        elif opção == "e":
+            exibir_extrato(saldo, extrato=extrato)
+
+        elif opção == "nc":
+            conta = criar_conta(AGÊNCIA, input("Número da conta: "), usuário)
+            se conta:
+                contas.append(conta)
+
+        elif opção == "lc":
+            listar_contas(contas)
+
+        elif opção == "nu":
+            criar_usuário(usuário)
+
+        elif opção == "q":
+            quebrar
+
+        outro:
+            print("Operação inválida, por favor, selecione novamente a operação desejada.")
+
+se __nome__ == "__main__":
+    principal()
